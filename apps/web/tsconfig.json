@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "strict": true,
+    "paths": {
+      "@matchpaw/shared": ["../../packages/shared/src/index.ts"],
+      "@matchpaw/shared/*": ["../../packages/shared/src/*"],
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

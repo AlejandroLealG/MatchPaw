@@ -1,0 +1,17 @@
+{
+  "name": "@matchpaw/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint src app --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@matchpaw/shared": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

@@ -6,6 +6,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 import { StorageModule } from './storage/storage.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RefugiosModule } from './modules/refugios/refugios.module';
+import { AnimalesModule } from './modules/animales/animales.module';
+import { SolicitudesModule } from './modules/solicitudes/solicitudes.module';
 
 @Module({
   imports: [
@@ -54,6 +57,9 @@ import { AuthModule } from './modules/auth/auth.module';
     // ── Domain modules ─────────────────────────────────────────────────────
     StorageModule,
     AuthModule,
+    RefugiosModule,
+    AnimalesModule,
+    SolicitudesModule,
   ],
 })
 export class AppModule {}

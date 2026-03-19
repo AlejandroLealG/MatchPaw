@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import type { AnimalDetalle } from '../../../hooks/usePets';
 import { AnimalDetailView } from '../../../components/features/animals/AnimalDetailView';
+import { AdoptionRequestButton } from '../../../components/features/requests/AdoptionRequestButton';
 
 interface Props {
   params: { id: string };
@@ -38,19 +39,10 @@ export default async function AnimalDetallePage({ params }: Props) {
 
   return (
     <main>
-      {/*
-        requestSlot se pasa vacío aquí — el botón de solicitud se implementa
-        en la tarea 17 (AdoptionRequestButton). Por ahora se muestra el estado
-        del animal correctamente (Requisitos 4.3, 4.4).
-      */}
+      {/* Requisitos 4.3, 4.4: requestSlot solo se muestra si animal.canRequest */}
       <AnimalDetailView
         animal={animal}
-        requestSlot={
-          // Placeholder hasta que AdoptionRequestButton esté disponible (tarea 17)
-          <p className="rounded-lg bg-surface-alt px-4 py-3 text-sm text-primary dark:bg-gray-800 dark:text-dark-primary">
-            Inicia sesión para enviar una solicitud de adopción.
-          </p>
-        }
+        requestSlot={<AdoptionRequestButton animalId={animal._id} />}
       />
     </main>
   );

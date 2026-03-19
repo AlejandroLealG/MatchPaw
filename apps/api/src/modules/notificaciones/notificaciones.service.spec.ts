@@ -20,6 +20,9 @@ import * as webpush from 'web-push';
 // Access the mocked module after jest.mock has been set up
 const webpushMock = webpush as jest.Mocked<typeof webpush>;
 
+// Minimal SendResult stub — matches the web-push SendResult shape
+const mockSendResult: webpush.SendResult = { statusCode: 201, body: '', headers: {} };
+
 describe('NotificacionesService', () => {
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
@@ -85,7 +88,7 @@ describe('NotificacionesService', () => {
 
   describe('crear', () => {
     it('crea una notificación en DB', async () => {
-      webpushMock.sendNotification.mockResolvedValue(undefined);
+      webpushMock.sendNotification.mockResolvedValue(mockSendResult);
 
       const notif = await service.crear({
         userId: userId.toString(),
@@ -104,7 +107,7 @@ describe('NotificacionesService', () => {
 
   describe('findByUser', () => {
     it('retorna notificaciones del usuario', async () => {
-      webpushMock.sendNotification.mockResolvedValue(undefined);
+      webpushMock.sendNotification.mockResolvedValue(mockSendResult);
 
       await service.crear({
         userId: userId.toString(),
@@ -127,7 +130,7 @@ describe('NotificacionesService', () => {
 
   describe('markAsRead', () => {
     it('marca la notificación como leída', async () => {
-      webpushMock.sendNotification.mockResolvedValue(undefined);
+      webpushMock.sendNotification.mockResolvedValue(mockSendResult);
 
       const notif = await service.crear({
         userId: userId.toString(),
@@ -181,7 +184,7 @@ describe('NotificacionesService', () => {
 
   describe('crearParaTipo', () => {
     it('crea notificación para el tipo dado', async () => {
-      webpushMock.sendNotification.mockResolvedValue(undefined);
+      webpushMock.sendNotification.mockResolvedValue(mockSendResult);
 
       await service.crearParaTipo(
         userId.toString(),
@@ -206,7 +209,7 @@ describe('NotificacionesService', () => {
     });
 
     it('llama sendNotification para cada suscripción del usuario', async () => {
-      webpushMock.sendNotification.mockResolvedValue(undefined);
+      webpushMock.sendNotification.mockResolvedValue(mockSendResult);
 
       await service.suscribir({
         userId: userId.toString(),

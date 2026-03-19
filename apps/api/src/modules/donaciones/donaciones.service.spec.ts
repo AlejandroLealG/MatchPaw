@@ -1,3 +1,27 @@
+// Mock Stripe BEFORE any imports — jest.mock is hoisted automatically.
+// The factory must be self-contained (no external variable references).
+jest.mock('stripe', () => {
+  const mockInstance = {
+    paymentIntents: {
+      create: jest.fn().mockResolvedValue({
+        id: 'pi_test_123',
+        client_secret: 'pi_test_123_secret',
+      }),
+    },
+    webhooks: { constructEvent: jest.fn() },
+    customers: { create: jest.fn().mockResolvedValue({ id: 'cus_test_123' }) },
+    prices: { create: jest.fn().mockResolvedValue({ id: 'price_test_123' }) },
+    subscriptions: {
+      create: jest.fn().mockResolvedValue({ id: 'sub_test_123' }),
+      cancel: jest.fn().mockResolvedValue({}),
+    },
+  };
+  const ctor = jest.fn().mockImplementation(() => mockInstance);
+  // Expose instance so tests can access it via jest.requireMock
+  (ctor as jest.Mock & { _instance: typeof mockInstance })._instance = mockInstance;
+  return { __esModule: true, default: ctor };
+});
+
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
@@ -25,33 +49,10 @@ const UserMinSchema = new Schema({
   stripeCustomerId: { type: String, default: null },
 });
 
-// Stripe mock — avoids real API calls
-const stripeMock = {
-  paymentIntents: {
-    create: jest.fn().mockResolvedValue({
-      id: 'pi_test_123',
-      client_secret: 'pi_test_123_secret',
-    }),
-  },
-  webhooks: {
-    constructEvent: jest.fn(),
-  },
-  customers: {
-    create: jest.fn().mockResolvedValue({ id: 'cus_test_123' }),
-  },
-  prices: {
-    create: jest.fn().mockResolvedValue({ id: 'price_test_123' }),
-  },
-  subscriptions: {
-    create: jest.fn().mockResolvedValue({ id: 'sub_test_123' }),
-    cancel: jest.fn().mockResolvedValue({}),
-  },
-};
-
-// Patch Stripe constructor before importing DonacionesService
-jest.mock('stripe', () => {
-  return jest.fn().mockImplementation(() => stripeMock);
-});
+// Access the mock instance created in the factory above
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const StripeMock = jest.requireMock('stripe').default as jest.Mock & { _instance: any };
+const stripeMock = StripeMock._instance;
 
 describe('DonacionesService', () => {
   let mongod: MongoMemoryServer;
@@ -106,10 +107,7 @@ describe('DonacionesService', () => {
         DonacionesRepository,
         DonacionesService,
         { provide: getModelToken(Donacion.name), useValue: donacionModel },
-        {
-          provide: getModelToken(SuscripcionDonacion.name),
-          useValue: suscripcionModel,
-        },
+        { provide: getModelToken(SuscripcionDonacion.name), useValue: suscripcionModel },
         { provide: getModelToken('Refugio'), useValue: refugioModel },
         { provide: getModelToken('User'), useValue: userModel },
         { provide: getModelToken(Notificacion.name), useValue: notificacionModel },
@@ -134,7 +132,7 @@ describe('DonacionesService', () => {
     await userModel.deleteMany({});
     await notificacionModel.deleteMany({});
     jest.clearAllMocks();
-    // Restore default mock implementations
+    // Restore default mock implementations after clearAllMocks
     stripeMock.paymentIntents.create.mockResolvedValue({
       id: 'pi_test_123',
       client_secret: 'pi_test_123_secret',
@@ -212,7 +210,6 @@ describe('DonacionesService', () => {
       const refugio = await crearRefugioVerificado();
       const user = await crearUsuario();
 
-      // Crear donación pendiente
       const donacion = await donacionModel.create({
         refugioId: refugio._id,
         donanteId: user._id,
@@ -315,7 +312,7 @@ describe('DonacionesService', () => {
     });
   });
 
-  // ── historialDonaciones ───────────────────────────────────────────────────
+  // ── historialDonacionesByUserId ───────────────────────────────────────────
 
   describe('historialDonacionesByUserId', () => {
     it('lanza NotFoundException si el refugio no existe para el userId', async () => {
@@ -401,7 +398,6 @@ describe('DonacionesService', () => {
         montoMensual: 20000,
       });
 
-      // Should NOT call customers.create since stripeCustomerId already exists
       expect(stripeMock.customers.create).not.toHaveBeenCalled();
     });
 

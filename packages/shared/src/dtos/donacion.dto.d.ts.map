@@ -1,0 +1,1 @@
+{"version":3,"file":"donacion.dto.d.ts","sourceRoot":"","sources":["donacion.dto.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,iBAAiB;IAChC,SAAS,EAAE,MAAM,CAAC;IAClB,8DAA8D;IAC9D,KAAK,EAAE,MAAM,CAAC;CACf;AAED,MAAM,WAAW,oBAAoB;IACnC,SAAS,EAAE,MAAM,CAAC;IAClB,sEAAsE;IACtE,YAAY,EAAE,MAAM,CAAC;CACtB"}

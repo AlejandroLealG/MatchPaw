@@ -19,10 +19,7 @@ export class AnimalesRepository {
     private readonly animalModel: Model<AnimalDocument>,
   ) {}
 
-  async create(
-    refugioId: string,
-    dto: CreateAnimalDto,
-  ): Promise<AnimalDocument> {
+  async create(refugioId: string, dto: CreateAnimalDto): Promise<AnimalDocument> {
     const animal = new this.animalModel({
       ...dto,
       refugioId: new Types.ObjectId(refugioId),
@@ -72,12 +69,7 @@ export class AnimalesRepository {
     const sortOrder = filters.orderBy === 'antiguo' ? 1 : -1;
 
     const [data, total] = await Promise.all([
-      this.animalModel
-        .find(query)
-        .sort({ createdAt: sortOrder })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
+      this.animalModel.find(query).sort({ createdAt: sortOrder }).skip(skip).limit(limit).exec(),
       this.animalModel.countDocuments(query).exec(),
     ]);
 
@@ -90,14 +82,9 @@ export class AnimalesRepository {
     };
   }
 
-  async update(
-    id: string,
-    dto: UpdateAnimalDto,
-  ): Promise<AnimalDocument | null> {
+  async update(id: string, dto: UpdateAnimalDto): Promise<AnimalDocument | null> {
     if (!Types.ObjectId.isValid(id)) return null;
-    return this.animalModel
-      .findByIdAndUpdate(id, { $set: dto }, { new: true })
-      .exec();
+    return this.animalModel.findByIdAndUpdate(id, { $set: dto }, { new: true }).exec();
   }
 
   async updateEstado(
@@ -105,15 +92,11 @@ export class AnimalesRepository {
     estado: 'disponible' | 'en_proceso' | 'adoptado',
   ): Promise<AnimalDocument | null> {
     if (!Types.ObjectId.isValid(id)) return null;
-    return this.animalModel
-      .findByIdAndUpdate(id, { $set: { estado } }, { new: true })
-      .exec();
+    return this.animalModel.findByIdAndUpdate(id, { $set: { estado } }, { new: true }).exec();
   }
 
   async findByRefugioId(refugioId: string): Promise<AnimalDocument[]> {
     if (!Types.ObjectId.isValid(refugioId)) return [];
-    return this.animalModel
-      .find({ refugioId: new Types.ObjectId(refugioId) })
-      .exec();
+    return this.animalModel.find({ refugioId: new Types.ObjectId(refugioId) }).exec();
   }
 }

@@ -21,10 +21,7 @@ export class SolicitudesRepository {
     private readonly solicitudModel: Model<SolicitudDocument>,
   ) {}
 
-  async create(
-    adoptanteId: string,
-    dto: CreateSolicitudDto,
-  ): Promise<SolicitudDocument> {
+  async create(adoptanteId: string, dto: CreateSolicitudDto): Promise<SolicitudDocument> {
     const solicitud = new this.solicitudModel({
       animalId: new Types.ObjectId(dto.animalId),
       adoptanteId: new Types.ObjectId(adoptanteId),
@@ -56,9 +53,7 @@ export class SolicitudesRepository {
    * con datos del adoptante, ordenadas de más reciente a más antigua.
    * Requisito 5.5, 7.2
    */
-  async findByRefugio(
-    animalIds: Types.ObjectId[],
-  ): Promise<SolicitudDocument[]> {
+  async findByRefugio(animalIds: Types.ObjectId[]): Promise<SolicitudDocument[]> {
     if (animalIds.length === 0) return [];
     return this.solicitudModel
       .find({ animalId: { $in: animalIds } })

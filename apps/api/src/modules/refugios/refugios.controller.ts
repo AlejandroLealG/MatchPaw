@@ -39,11 +39,7 @@ export class RefugiosController {
     @Body() body: UpdateRefugioDto,
     @Req() req: AuthRequest,
   ): Promise<IRefugio> {
-    const updated = await this.refugiosService.editarPerfil(
-      id,
-      req.user.sub,
-      body,
-    );
+    const updated = await this.refugiosService.editarPerfil(id, req.user.sub, body);
     return this.refugiosService.toDto(updated);
   }
 
@@ -91,10 +87,7 @@ export class RefugiosController {
   @Get(':id/metricas')
   @Roles('refugio')
   @HttpCode(HttpStatus.OK)
-  async getMetricas(
-    @Param('id') id: string,
-    @Req() req: AuthRequest,
-  ): Promise<RefugioMetricas> {
+  async getMetricas(@Param('id') id: string, @Req() req: AuthRequest): Promise<RefugioMetricas> {
     return this.refugiosService.obtenerMetricas(id, req.user.sub);
   }
 }

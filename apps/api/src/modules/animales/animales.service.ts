@@ -6,12 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import {
-  AnimalFilterDto,
-  CreateAnimalDto,
-  IAnimal,
-  UpdateAnimalDto,
-} from '@matchpaw/shared';
+import { AnimalFilterDto, CreateAnimalDto, IAnimal, UpdateAnimalDto } from '@matchpaw/shared';
 import { AnimalesRepository, PaginatedAnimales } from './animales.repository';
 import { AnimalDocument } from './schemas/animal.schema';
 import { RefugioDocument } from '../refugios/schemas/refugio.schema';
@@ -43,10 +38,7 @@ export class AnimalesService {
 
   // ── Publicar animal ───────────────────────────────────────────────────────
 
-  async publicar(
-    requestingUserId: string,
-    dto: CreateAnimalDto,
-  ): Promise<AnimalDocument> {
+  async publicar(requestingUserId: string, dto: CreateAnimalDto): Promise<AnimalDocument> {
     const refugio = await this.refugioModel
       .findOne({ userId: new Types.ObjectId(requestingUserId) })
       .exec();
@@ -122,10 +114,7 @@ export class AnimalesService {
       return { data: [], total: 0, page, limit, totalPages: 0 };
     }
 
-    const result: PaginatedAnimales = await this.repo.findAll(
-      filters,
-      verificadosIds,
-    );
+    const result: PaginatedAnimales = await this.repo.findAll(filters, verificadosIds);
 
     // Construir mapa de refugios para enriquecer la respuesta
     const refugioMap = new Map(
@@ -160,10 +149,7 @@ export class AnimalesService {
   async findById(id: string): Promise<AnimalWithRefugio> {
     const animal = await this.findByIdOrFail(id);
 
-    const refugio = await this.refugioModel
-      .findById(animal.refugioId)
-      .lean()
-      .exec();
+    const refugio = await this.refugioModel.findById(animal.refugioId).lean().exec();
 
     const refugioInfo = refugio
       ? {
@@ -196,15 +182,11 @@ export class AnimalesService {
     animal: AnimalDocument,
     requestingUserId: string,
   ): Promise<void> {
-    const refugio = await this.refugioModel
-      .findById(animal.refugioId)
-      .lean()
-      .exec();
+    const refugio = await this.refugioModel.findById(animal.refugioId).lean().exec();
 
     if (
       !refugio ||
-      (refugio as { userId: Types.ObjectId }).userId.toString() !==
-        requestingUserId
+      (refugio as { userId: Types.ObjectId }).userId.toString() !== requestingUserId
     ) {
       throw new ForbiddenException({
         error: {

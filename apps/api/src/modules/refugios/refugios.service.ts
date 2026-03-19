@@ -120,10 +120,7 @@ export class RefugiosService {
 
   // ── Métricas ──────────────────────────────────────────────────────────────
 
-  async obtenerMetricas(
-    refugioId: string,
-    requestingUserId: string,
-  ): Promise<RefugioMetricas> {
+  async obtenerMetricas(refugioId: string, requestingUserId: string): Promise<RefugioMetricas> {
     const refugio = await this.findById(refugioId);
 
     if (refugio.userId.toString() !== requestingUserId) {

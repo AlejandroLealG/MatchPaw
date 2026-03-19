@@ -14,11 +14,7 @@ import { Request } from 'express';
 import { CreateSolicitudDto, UpdateSolicitudEstadoDto } from '@matchpaw/shared';
 import { JwtAuthGuard, Roles, RolesGuard } from '../../common/guards';
 import { JwtPayload } from '../auth/auth.service';
-import {
-  SolicitudesService,
-  SolicitudDto,
-  SolicitudesPorAnimal,
-} from './solicitudes.service';
+import { SolicitudesService, SolicitudDto, SolicitudesPorAnimal } from './solicitudes.service';
 
 type AuthRequest = Request & { user: JwtPayload };
 
@@ -31,10 +27,7 @@ export class SolicitudesController {
   @Post()
   @Roles('adoptante')
   @HttpCode(HttpStatus.CREATED)
-  async create(
-    @Body() dto: CreateSolicitudDto,
-    @Req() req: AuthRequest,
-  ): Promise<SolicitudDto> {
+  async create(@Body() dto: CreateSolicitudDto, @Req() req: AuthRequest): Promise<SolicitudDto> {
     const doc = await this.solicitudesService.enviar(req.user.sub, dto);
     return this.solicitudesService.toDto(doc);
   }
@@ -51,9 +44,7 @@ export class SolicitudesController {
   @Get('refugio')
   @Roles('refugio')
   @HttpCode(HttpStatus.OK)
-  async solicitudesRefugio(
-    @Req() req: AuthRequest,
-  ): Promise<SolicitudesPorAnimal[]> {
+  async solicitudesRefugio(@Req() req: AuthRequest): Promise<SolicitudesPorAnimal[]> {
     return this.solicitudesService.historialRefugio(req.user.sub);
   }
 
@@ -66,11 +57,7 @@ export class SolicitudesController {
     @Body() dto: UpdateSolicitudEstadoDto,
     @Req() req: AuthRequest,
   ): Promise<SolicitudDto> {
-    const doc = await this.solicitudesService.cambiarEstado(
-      id,
-      req.user.sub,
-      dto,
-    );
+    const doc = await this.solicitudesService.cambiarEstado(id, req.user.sub, dto);
     return this.solicitudesService.toDto(doc);
   }
 }

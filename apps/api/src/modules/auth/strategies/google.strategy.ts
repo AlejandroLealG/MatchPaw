@@ -12,8 +12,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     config: ConfigService,
   ) {
     super({
-      clientID: config.get<string>('GOOGLE_CLIENT_ID', ''),
-      clientSecret: config.get<string>('GOOGLE_CLIENT_SECRET', ''),
+      clientID: config.get<string>('GOOGLE_CLIENT_ID', 'placeholder'),
+      clientSecret: config.get<string>('GOOGLE_CLIENT_SECRET', 'placeholder'),
       callbackURL: 'http://localhost:3001/auth/google/callback',
       scope: ['email', 'profile'],
       passReqToCallback: true,
@@ -36,8 +36,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
 
     const rawRole = req.query?.role;
-    const role: UserRole =
-      rawRole === 'refugio' ? 'refugio' : 'adoptante';
+    const role: UserRole = rawRole === 'refugio' ? 'refugio' : 'adoptante';
 
     try {
       const user = await this.authService.validateGoogleUser(

@@ -8,11 +8,12 @@ import { InjectQueue } from '@nestjs/bull';
 import { InjectModel } from '@nestjs/mongoose';
 import { Queue } from 'bull';
 import { Model, Types } from 'mongoose';
-import { CreateSolicitudDto, ISolicitud, SolicitudEstado, UpdateSolicitudEstadoDto } from '@matchpaw/shared';
+import { CreateSolicitudDto, ISolicitud, UpdateSolicitudEstadoDto } from '@matchpaw/shared';
 import { SolicitudesRepository } from './solicitudes.repository';
 import { SolicitudDocument } from './schemas/solicitud.schema';
 import { AnimalDocument } from '../animales/schemas/animal.schema';
 import { RefugioDocument } from '../refugios/schemas/refugio.schema';
+import { Notificacion, NotificacionDocument } from '../notificaciones/schemas/notificacion.schema';
 
 export interface SolicitudDto extends ISolicitud {
   animal?: {
@@ -41,14 +42,8 @@ export class SolicitudesService {
     private readonly animalModel: Model<AnimalDocument>,
     @InjectModel('Refugio')
     private readonly refugioModel: Model<RefugioDocument>,
-    @InjectModel('Notificacion')
-    private readonly notificacionModel: Model<{
-      userId: Types.ObjectId;
-      tipo: string;
-      titulo: string;
-      cuerpo: string;
-      leida: boolean;
-    }>,
+    @InjectModel(Notificacion.name)
+    private readonly notificacionModel: Model<NotificacionDocument>,
     @InjectQueue('email')
     private readonly emailQueue: Queue,
   ) {}
@@ -74,10 +69,7 @@ export class SolicitudesService {
     }
 
     // Verificar duplicado activo — Requisito 5.6
-    const duplicado = await this.repo.findActiveByAnimalAndAdoptante(
-      dto.animalId,
-      adoptanteId,
-    );
+    const duplicado = await this.repo.findActiveByAnimalAndAdoptante(dto.animalId, adoptanteId);
     if (duplicado) {
       throw new ConflictException({
         error: {
@@ -135,11 +127,7 @@ export class SolicitudesService {
       });
     }
 
-    const updated = await this.repo.updateEstado(
-      solicitudId,
-      dto.estado,
-      dto.motivo,
-    );
+    const updated = await this.repo.updateEstado(solicitudId, dto.estado, dto.motivo);
 
     const animal = await this.animalModel.findById(solicitud.animalId).exec();
     const animalNombre = animal?.nombre ?? 'el animal';
@@ -281,7 +269,11 @@ export class SolicitudesService {
 
   toDto(doc: SolicitudDocument): SolicitudDto {
     const raw = doc as SolicitudDocument & {
-      animalId: Types.ObjectId & { nombre?: string; especie?: string; fotos?: { url: string; orden: number }[] };
+      animalId: Types.ObjectId & {
+        nombre?: string;
+        especie?: string;
+        fotos?: { url: string; orden: number }[];
+      };
       adoptanteId: Types.ObjectId & { email?: string };
     };
 

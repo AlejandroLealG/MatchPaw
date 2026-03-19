@@ -9,6 +9,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { RefugiosModule } from './modules/refugios/refugios.module';
 import { AnimalesModule } from './modules/animales/animales.module';
 import { SolicitudesModule } from './modules/solicitudes/solicitudes.module';
+import { DonacionesModule } from './modules/donaciones/donaciones.module';
+import { NotificacionesModule } from './modules/notificaciones/notificaciones.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -44,9 +47,7 @@ import { SolicitudesModule } from './modules/solicitudes/solicitudes.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => [
         {
-          rootPath: path.resolve(
-            config.get<string>('UPLOADS_DIR', './uploads'),
-          ),
+          rootPath: path.resolve(config.get<string>('UPLOADS_DIR', './uploads')),
           serveRoot: '/uploads',
           serveStaticOptions: { index: false },
         },
@@ -60,6 +61,9 @@ import { SolicitudesModule } from './modules/solicitudes/solicitudes.module';
     RefugiosModule,
     AnimalesModule,
     SolicitudesModule,
+    DonacionesModule,
+    NotificacionesModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

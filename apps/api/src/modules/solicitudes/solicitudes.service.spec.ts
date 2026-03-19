@@ -1,12 +1,8 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { connect, Connection, Document, Model, Schema, Types } from 'mongoose';
-import {
-  ConflictException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { connect, Connection, Model, Schema, Types } from 'mongoose';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { getQueueToken } from '@nestjs/bull';
 import { Solicitud, SolicitudSchema } from './schemas/solicitud.schema';
 import { Animal, AnimalSchema } from '../animales/schemas/animal.schema';
@@ -86,10 +82,7 @@ describe('SolicitudesService', () => {
     refugioModel = mongoConnection.model(Refugio.name, RefugioSchema);
     // Register User schema so Mongoose can resolve the 'User' ref in populate
     mongoConnection.model('User', UserSchema);
-    notificacionModel = mongoConnection.model(
-      'Notificacion',
-      NotificacionPlaceholderSchema,
-    );
+    notificacionModel = mongoConnection.model('Notificacion', NotificacionPlaceholderSchema);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -194,9 +187,7 @@ describe('SolicitudesService', () => {
 
       await service.enviar(adoptanteId.toString(), dto);
 
-      await expect(
-        service.enviar(adoptanteId.toString(), dto),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.enviar(adoptanteId.toString(), dto)).rejects.toThrow(ConflictException);
     });
   });
 
@@ -244,11 +235,9 @@ describe('SolicitudesService', () => {
         animalId: animal._id.toString(),
       });
 
-      await service.cambiarEstado(
-        solicitud._id.toString(),
-        refugioUserId.toString(),
-        { estado: 'aprobada' },
-      );
+      await service.cambiarEstado(solicitud._id.toString(), refugioUserId.toString(), {
+        estado: 'aprobada',
+      });
 
       expect(emailQueueMock.add).toHaveBeenCalledWith(
         'cambio-estado-solicitud',
@@ -263,18 +252,14 @@ describe('SolicitudesService', () => {
         animalId: animal._id.toString(),
       });
 
-      await service.cambiarEstado(
-        solicitud._id.toString(),
-        refugioUserId.toString(),
-        { estado: 'aprobada' },
-      );
+      await service.cambiarEstado(solicitud._id.toString(), refugioUserId.toString(), {
+        estado: 'aprobada',
+      });
 
       await expect(
-        service.cambiarEstado(
-          solicitud._id.toString(),
-          refugioUserId.toString(),
-          { estado: 'rechazada' },
-        ),
+        service.cambiarEstado(solicitud._id.toString(), refugioUserId.toString(), {
+          estado: 'rechazada',
+        }),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -286,21 +271,17 @@ describe('SolicitudesService', () => {
       });
 
       await expect(
-        service.cambiarEstado(
-          solicitud._id.toString(),
-          new Types.ObjectId().toString(),
-          { estado: 'aprobada' },
-        ),
+        service.cambiarEstado(solicitud._id.toString(), new Types.ObjectId().toString(), {
+          estado: 'aprobada',
+        }),
       ).rejects.toThrow(ForbiddenException);
     });
 
     it('lanza NotFoundException si la solicitud no existe', async () => {
       await expect(
-        service.cambiarEstado(
-          new Types.ObjectId().toString(),
-          refugioUserId.toString(),
-          { estado: 'aprobada' },
-        ),
+        service.cambiarEstado(new Types.ObjectId().toString(), refugioUserId.toString(), {
+          estado: 'aprobada',
+        }),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -339,9 +320,7 @@ describe('SolicitudesService', () => {
     });
 
     it('retorna lista vacía si el adoptante no tiene solicitudes', async () => {
-      const historial = await service.historialAdoptante(
-        new Types.ObjectId().toString(),
-      );
+      const historial = await service.historialAdoptante(new Types.ObjectId().toString());
       expect(historial).toHaveLength(0);
     });
   });
@@ -365,9 +344,9 @@ describe('SolicitudesService', () => {
     });
 
     it('lanza NotFoundException si el refugio no existe', async () => {
-      await expect(
-        service.historialRefugio(new Types.ObjectId().toString()),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.historialRefugio(new Types.ObjectId().toString())).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('retorna lista vacía si el refugio no tiene animales con solicitudes', async () => {

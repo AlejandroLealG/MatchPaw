@@ -56,9 +56,7 @@ export class RefugiosRepository {
     }>,
   ): Promise<RefugioDocument | null> {
     if (!Types.ObjectId.isValid(id)) return null;
-    return this.refugioModel
-      .findByIdAndUpdate(id, { $set: data }, { new: true })
-      .exec();
+    return this.refugioModel.findByIdAndUpdate(id, { $set: data }, { new: true }).exec();
   }
 
   async findByEstado(estado: RefugioEstado): Promise<RefugioDocument[]> {

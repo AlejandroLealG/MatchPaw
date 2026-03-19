@@ -16,11 +16,7 @@ import { Request } from 'express';
 import { AnimalFilterDto, CreateAnimalDto, UpdateAnimalDto } from '@matchpaw/shared';
 import { JwtAuthGuard, Public, Roles, RolesGuard } from '../../common/guards';
 import { JwtPayload } from '../auth/auth.service';
-import {
-  AnimalesService,
-  AnimalWithRefugio,
-  PaginatedAnimalesDto,
-} from './animales.service';
+import { AnimalesService, AnimalWithRefugio, PaginatedAnimalesDto } from './animales.service';
 
 type AuthRequest = Request & { user: JwtPayload };
 
@@ -41,10 +37,7 @@ export class AnimalesController {
   @Post()
   @Roles('refugio')
   @HttpCode(HttpStatus.CREATED)
-  async create(
-    @Body() dto: CreateAnimalDto,
-    @Req() req: AuthRequest,
-  ): Promise<AnimalWithRefugio> {
+  async create(@Body() dto: CreateAnimalDto, @Req() req: AuthRequest): Promise<AnimalWithRefugio> {
     const doc = await this.animalesService.publicar(req.user.sub, dto);
     return this.animalesService.findById(doc._id.toString());
   }

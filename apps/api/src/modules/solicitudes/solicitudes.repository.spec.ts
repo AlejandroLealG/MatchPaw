@@ -3,13 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model, Schema, Types } from 'mongoose';
 import { Solicitud, SolicitudSchema } from './schemas/solicitud.schema';
-import { Animal, AnimalSchema } from '../animales/schemas/animal.schema';
+import { AnimalSchema } from '../animales/schemas/animal.schema';
 import { SolicitudesRepository } from './solicitudes.repository';
 import { CreateSolicitudDto } from '@matchpaw/shared';
 
 // Minimal User schema so Mongoose can resolve the 'User' ref used in populate
 const UserSchema = new Schema({ email: String });
-
 
 describe('SolicitudesRepository', () => {
   let mongod: MongoMemoryServer;
@@ -164,10 +163,7 @@ describe('SolicitudesRepository', () => {
     });
 
     it('retorna null para ids inválidos', async () => {
-      const result = await repo.findActiveByAnimalAndAdoptante(
-        'id-invalido',
-        'id-invalido',
-      );
+      const result = await repo.findActiveByAnimalAndAdoptante('id-invalido', 'id-invalido');
       expect(result).toBeNull();
     });
   });

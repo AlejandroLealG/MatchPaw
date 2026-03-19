@@ -1,18 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
     "moduleResolution": "node",
     "lib": ["ES2020"],
+    "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "paths": {
-      "@matchpaw/shared": ["../../packages/shared/src/index.ts"],
-      "@matchpaw/shared/*": ["../../packages/shared/src/*"]
-    }
+    "skipLibCheck": true,
+    "types": ["jest", "node", "multer"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

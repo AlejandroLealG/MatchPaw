@@ -2,11 +2,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model, Types } from 'mongoose';
-import {
-  BadRequestException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Animal, AnimalSchema } from './schemas/animal.schema';
 import { Refugio, RefugioSchema } from '../refugios/schemas/refugio.schema';
 import { AnimalesRepository } from './animales.repository';
@@ -107,9 +103,9 @@ describe('AnimalesService', () => {
         estado: 'pendiente_verificacion',
       });
 
-      await expect(
-        service.publicar(userId.toString(), baseAnimalDto),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.publicar(userId.toString(), baseAnimalDto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('lanza BadRequestException si faltan campos obligatorios', async () => {
@@ -161,9 +157,9 @@ describe('AnimalesService', () => {
     });
 
     it('lanza NotFoundException para id inexistente', async () => {
-      await expect(
-        service.findById(new Types.ObjectId().toString()),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findById(new Types.ObjectId().toString())).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -209,8 +205,18 @@ describe('AnimalesService', () => {
       });
 
       await animalModel.create([
-        { ...baseAnimalDto, nombre: 'AnimalBogota', refugioId: refugioBogota._id, estado: 'disponible' },
-        { ...baseAnimalDto, nombre: 'AnimalCali', refugioId: refugioCali._id, estado: 'disponible' },
+        {
+          ...baseAnimalDto,
+          nombre: 'AnimalBogota',
+          refugioId: refugioBogota._id,
+          estado: 'disponible',
+        },
+        {
+          ...baseAnimalDto,
+          nombre: 'AnimalCali',
+          refugioId: refugioCali._id,
+          estado: 'disponible',
+        },
       ]);
 
       const result = await service.buscar({ ciudad: 'Cali' });
@@ -229,11 +235,9 @@ describe('AnimalesService', () => {
         estado: 'disponible',
       });
 
-      const updated = await service.editar(
-        animal._id.toString(),
-        userId.toString(),
-        { nombre: 'Rex' },
-      );
+      const updated = await service.editar(animal._id.toString(), userId.toString(), {
+        nombre: 'Rex',
+      });
 
       expect(updated.nombre).toBe('Rex');
     });
@@ -247,11 +251,7 @@ describe('AnimalesService', () => {
       });
 
       await expect(
-        service.editar(
-          animal._id.toString(),
-          new Types.ObjectId().toString(),
-          { nombre: 'Rex' },
-        ),
+        service.editar(animal._id.toString(), new Types.ObjectId().toString(), { nombre: 'Rex' }),
       ).rejects.toThrow(ForbiddenException);
     });
   });

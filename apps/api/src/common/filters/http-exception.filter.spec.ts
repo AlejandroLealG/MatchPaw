@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { HttpExceptionFilter } from './http-exception.filter';
 
-function makeHost(statusFn: jest.Mock, jsonFn: jest.Mock) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function makeHost(statusFn: jest.Mock, jsonFn: jest.Mock): any {
   return {
     switchToHttp: () => ({
       getResponse: () => ({
@@ -10,7 +11,7 @@ function makeHost(statusFn: jest.Mock, jsonFn: jest.Mock) {
       }),
       getRequest: () => ({ method: 'GET', url: '/test' }),
     }),
-  } as any;
+  };
 }
 
 describe('HttpExceptionFilter', () => {

@@ -18,8 +18,7 @@ export class PasswordResetToken {
   usado!: boolean;
 }
 
-export const PasswordResetTokenSchema =
-  SchemaFactory.createForClass(PasswordResetToken);
+export const PasswordResetTokenSchema = SchemaFactory.createForClass(PasswordResetToken);
 
 // TTL index: MongoDB elimina automáticamente el documento cuando expira
 PasswordResetTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

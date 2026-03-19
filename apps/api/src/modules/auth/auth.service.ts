@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -157,10 +153,7 @@ export class AuthService {
     }
 
     const rawToken = crypto.randomBytes(32).toString('hex');
-    const tokenHash = crypto
-      .createHash('sha256')
-      .update(rawToken)
-      .digest('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
     const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
     await this.repo.createResetToken({
@@ -177,10 +170,7 @@ export class AuthService {
   // ── Reset password ────────────────────────────────────────────────────────
 
   async resetPassword(rawToken: string, newPassword: string): Promise<void> {
-    const tokenHash = crypto
-      .createHash('sha256')
-      .update(rawToken)
-      .digest('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
     const tokenDoc = await this.repo.findValidResetToken(tokenHash);
     if (!tokenDoc) {

@@ -9,13 +9,13 @@ export class User {
   @Prop({ required: true, unique: true, lowercase: true, trim: true })
   email!: string;
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   passwordHash!: string | null;
 
   @Prop({ required: true, enum: ['adoptante', 'refugio', 'admin'] })
   role!: UserRole;
 
-  @Prop({ default: null })
+  @Prop({ type: String, default: null })
   googleId!: string | null;
 
   @Prop({ default: true })

@@ -10,7 +10,7 @@ module.exports = {
   },
   settings: {
     react: {
-      version: 'detect',
+      version: '18.0',
     },
   },
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'prettier'],

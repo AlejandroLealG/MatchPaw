@@ -86,9 +86,7 @@ export class AuthRepository {
     return token.save();
   }
 
-  async findValidResetToken(
-    tokenHash: string,
-  ): Promise<PasswordResetTokenDocument | null> {
+  async findValidResetToken(tokenHash: string): Promise<PasswordResetTokenDocument | null> {
     return this.tokenModel
       .findOne({
         tokenHash,
@@ -99,8 +97,6 @@ export class AuthRepository {
   }
 
   async markTokenUsed(tokenId: string): Promise<void> {
-    await this.tokenModel
-      .findByIdAndUpdate(tokenId, { usado: true })
-      .exec();
+    await this.tokenModel.findByIdAndUpdate(tokenId, { usado: true }).exec();
   }
 }

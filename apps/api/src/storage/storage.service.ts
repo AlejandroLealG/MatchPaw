@@ -18,10 +18,7 @@ export class LocalStorageService implements IStorageService {
 
   async saveFile(file: Express.Multer.File): Promise<string> {
     // Multer disk storage already wrote the file; just return the public URL.
-    const relativePath = path.relative(
-      path.resolve(this.uploadsDir),
-      file.path,
-    );
+    const relativePath = path.relative(path.resolve(this.uploadsDir), file.path);
     return `${this.baseUrl}/uploads/${relativePath.replace(/\\/g, '/')}`;
   }
 

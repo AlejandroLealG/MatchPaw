@@ -64,14 +64,11 @@ export class AuthController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  async forgotPassword(
-    @Body() body: { email: string },
-  ): Promise<{ message: string }> {
+  async forgotPassword(@Body() body: { email: string }): Promise<{ message: string }> {
     // Siempre responder con el mismo mensaje para no revelar si el email existe
     await this.authService.forgotPassword(body.email);
     return {
-      message:
-        'Si el correo está registrado, recibirás un enlace de restablecimiento en breve',
+      message: 'Si el correo está registrado, recibirás un enlace de restablecimiento en breve',
     };
   }
 
@@ -94,10 +91,7 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleCallback(
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<void> {
+  async googleCallback(@Req() req: Request, @Res() res: Response): Promise<void> {
     const user = req.user as UserDocument;
     const tokens = await this.authService.googleLogin(user);
 

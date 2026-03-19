@@ -6,6 +6,12 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 import { StorageModule } from './storage/storage.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RefugiosModule } from './modules/refugios/refugios.module';
+import { AnimalesModule } from './modules/animales/animales.module';
+import { SolicitudesModule } from './modules/solicitudes/solicitudes.module';
+import { DonacionesModule } from './modules/donaciones/donaciones.module';
+import { NotificacionesModule } from './modules/notificaciones/notificaciones.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -41,9 +47,7 @@ import { AuthModule } from './modules/auth/auth.module';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => [
         {
-          rootPath: path.resolve(
-            config.get<string>('UPLOADS_DIR', './uploads'),
-          ),
+          rootPath: path.resolve(config.get<string>('UPLOADS_DIR', './uploads')),
           serveRoot: '/uploads',
           serveStaticOptions: { index: false },
         },
@@ -54,6 +58,12 @@ import { AuthModule } from './modules/auth/auth.module';
     // ── Domain modules ─────────────────────────────────────────────────────
     StorageModule,
     AuthModule,
+    RefugiosModule,
+    AnimalesModule,
+    SolicitudesModule,
+    DonacionesModule,
+    NotificacionesModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

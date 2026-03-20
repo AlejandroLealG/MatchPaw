@@ -26,7 +26,8 @@ export class AuthRepository {
       email: data.email,
       passwordHash: data.passwordHash ?? null,
       role: data.role,
-      googleId: data.googleId ?? null,
+      // Omitir googleId si no se provee — sparse index requiere ausencia del campo, no null
+      ...(data.googleId ? { googleId: data.googleId } : {}),
     });
     return user.save();
   }

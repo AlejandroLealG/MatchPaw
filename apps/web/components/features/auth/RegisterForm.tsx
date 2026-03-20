@@ -7,7 +7,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import type { UserRole } from '../../../store/authStore';
 
 interface RegisterFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (role: string) => void;
 }
 
 const ROLES: { value: UserRole; label: string; description: string }[] = [
@@ -43,8 +43,8 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
     }
     setErrors({});
     try {
-      await register({ email, password, role });
-      onSuccess?.();
+      const data = await register({ email, password, role });
+      onSuccess?.(data.user.role);
     } catch (err) {
       setServerError(err instanceof Error ? err.message : 'Error al registrarse');
     }

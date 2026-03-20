@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../../../store/authStore';
 import { ShelterDashboard } from '../../../components/features/shelter/ShelterDashboard';
+import { CreateShelterProfile } from '../../../components/features/shelter/CreateShelterProfile';
 import { Spinner } from '../../../components/ui/Spinner';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
@@ -78,16 +79,7 @@ export function DashboardClient() {
   }
 
   if (!refugioId) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-24 text-center">
-        <span className="text-5xl" aria-hidden="true">
-          ⚠️
-        </span>
-        <p className="text-base font-medium text-text-base dark:text-dark-text-base">
-          No se encontró el perfil del refugio. Contacta al administrador.
-        </p>
-      </div>
-    );
+    return <CreateShelterProfile token={token!} onCreated={(id) => setRefugioId(id)} />;
   }
 
   return <ShelterDashboard refugioId={refugioId} />;

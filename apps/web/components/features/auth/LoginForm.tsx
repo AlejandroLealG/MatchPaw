@@ -6,7 +6,7 @@ import { Input } from '../../ui/Input';
 import { useAuth } from '../../../hooks/useAuth';
 
 interface LoginFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (role: string) => void;
   onForgotPassword?: () => void;
 }
 
@@ -20,8 +20,8 @@ export function LoginForm({ onSuccess, onForgotPassword }: LoginFormProps) {
     e.preventDefault();
     setError(null);
     try {
-      await login({ email, password });
-      onSuccess?.();
+      const data = await login({ email, password });
+      onSuccess?.(data.user.role);
     } catch {
       // Mensaje genérico — no revelar qué campo falló (Requisito 1.4)
       setError('Correo electrónico o contraseña incorrectos');

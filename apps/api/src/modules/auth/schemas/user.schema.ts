@@ -15,8 +15,10 @@ export class User {
   @Prop({ required: true, enum: ['adoptante', 'refugio', 'admin'] })
   role!: UserRole;
 
-  @Prop({ type: String, default: null })
-  googleId!: string | null;
+  // No usar default: null — sparse index solo ignora documentos sin el campo,
+  // no los que tienen null explícito. Se omite el campo cuando no hay googleId.
+  @Prop({ type: String })
+  googleId?: string;
 
   @Prop({ default: true })
   activo!: boolean;

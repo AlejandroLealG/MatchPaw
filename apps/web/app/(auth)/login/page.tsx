@@ -3,17 +3,15 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LoginForm } from '../../../components/features/auth/LoginForm';
-import { useAuthStore } from '../../../store/authStore';
+
+function redirectByRole(role: string, router: ReturnType<typeof useRouter>) {
+  if (role === 'refugio') router.push('/refugio/dashboard');
+  else if (role === 'admin') router.push('/admin/dashboard');
+  else router.push('/animales');
+}
 
 export default function LoginPage() {
   const router = useRouter();
-  const user = useAuthStore((s) => s.user);
-
-  const handleSuccess = () => {
-    if (user?.role === 'refugio') router.push('/refugio/dashboard');
-    else if (user?.role === 'admin') router.push('/admin/dashboard');
-    else router.push('/animales');
-  };
 
   return (
     <>
@@ -22,7 +20,7 @@ export default function LoginPage() {
       </h2>
 
       <LoginForm
-        onSuccess={handleSuccess}
+        onSuccess={(role) => redirectByRole(role, router)}
         onForgotPassword={() => router.push('/forgot-password')}
       />
 

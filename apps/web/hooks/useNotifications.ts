@@ -68,18 +68,29 @@ export function useNotifications() {
   useEffect(() => {
     if (!token || !user) return;
 
+    let mounted = true;
+
     const socket = io(API_URL, {
       auth: { token },
       transports: ['websocket', 'polling'],
+      autoConnect: false,
+      reconnectionAttempts: 3,
     });
 
     socketRef.current = socket;
 
     socket.on('notificacion', (notificacion: Notificacion) => {
-      addNotificacion(notificacion);
+      if (mounted) addNotificacion(notificacion);
     });
 
+    // Pequeño delay para evitar conectar en componentes que se desmontan inmediatamente
+    const timer = setTimeout(() => {
+      if (mounted) socket.connect();
+    }, 100);
+
     return () => {
+      mounted = false;
+      clearTimeout(timer);
       socket.disconnect();
       socketRef.current = null;
     };

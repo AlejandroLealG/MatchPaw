@@ -77,7 +77,8 @@ export function useShelterRequests() {
         credentials: 'include',
       });
       if (!res.ok) throw new Error('Error al cargar las solicitudes');
-      const data: SolicitudConAnimal[] = await res.json();
+      const json = await res.json();
+      const data: SolicitudConAnimal[] = Array.isArray(json) ? json : (json.data ?? []);
       // Req 7.2: ordenadas de más reciente a más antigua
       const sorted = [...data].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -117,7 +118,9 @@ export function useShelterAnimals(refugioId: string) {
         credentials: 'include',
       });
       if (!res.ok) throw new Error('Error al cargar los animales');
-      const data: IAnimal[] = await res.json();
+      const json = await res.json();
+      // El endpoint puede devolver array directo o { data: [] } paginado
+      const data: IAnimal[] = Array.isArray(json) ? json : (json.data ?? []);
       setAnimales(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar los animales');

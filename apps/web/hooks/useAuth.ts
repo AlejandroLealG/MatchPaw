@@ -17,8 +17,18 @@ interface LoginPayload {
 }
 
 interface AuthResponse {
-  user: { id: string; email: string; role: UserRole };
   accessToken: string;
+}
+
+interface JwtPayload {
+  sub: string;
+  email: string;
+  role: UserRole;
+}
+
+function decodeJwt(token: string): JwtPayload {
+  const payload = token.split('.')[1];
+  return JSON.parse(atob(payload)) as JwtPayload;
 }
 
 export function useAuth() {
@@ -42,8 +52,12 @@ export function useAuth() {
           throw new Error(data?.error?.message ?? 'Error al registrarse');
         }
         const data: AuthResponse = await res.json();
-        setAuth(data.user, data.accessToken);
-        return data;
+        const jwtPayload = decodeJwt(data.accessToken);
+        const user = { id: jwtPayload.sub, email: jwtPayload.email, role: jwtPayload.role };
+        setAuth(user, data.accessToken);
+        // Guardar en cookie para que el middleware de Next.js pueda leerlo
+        document.cookie = `access_token=${data.accessToken}; path=/; max-age=900; SameSite=Lax`;
+        return { user, accessToken: data.accessToken };
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Error al registrarse';
         setError(message);
@@ -71,8 +85,12 @@ export function useAuth() {
           throw new Error('Correo electrónico o contraseña incorrectos');
         }
         const data: AuthResponse = await res.json();
-        setAuth(data.user, data.accessToken);
-        return data;
+        const jwtPayload = decodeJwt(data.accessToken);
+        const user = { id: jwtPayload.sub, email: jwtPayload.email, role: jwtPayload.role };
+        setAuth(user, data.accessToken);
+        // Guardar en cookie para que el middleware de Next.js pueda leerlo
+        document.cookie = `access_token=${data.accessToken}; path=/; max-age=900; SameSite=Lax`;
+        return { user, accessToken: data.accessToken };
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Correo electrónico o contraseña incorrectos';
@@ -93,6 +111,7 @@ export function useAuth() {
       });
     } finally {
       clearAuth();
+      document.cookie = 'access_token=; path=/; max-age=0; SameSite=Lax';
     }
   }, [clearAuth]);
 
@@ -104,13 +123,18 @@ export function useAuth() {
       });
       if (!res.ok) {
         clearAuth();
+        document.cookie = 'access_token=; path=/; max-age=0; SameSite=Lax';
         return null;
       }
       const data: AuthResponse = await res.json();
-      setAuth(data.user, data.accessToken);
+      const jwtPayload = decodeJwt(data.accessToken);
+      const user = { id: jwtPayload.sub, email: jwtPayload.email, role: jwtPayload.role };
+      setAuth(user, data.accessToken);
+      document.cookie = `access_token=${data.accessToken}; path=/; max-age=900; SameSite=Lax`;
       return data.accessToken;
     } catch {
       clearAuth();
+      document.cookie = 'access_token=; path=/; max-age=0; SameSite=Lax';
       return null;
     }
   }, [setAuth, clearAuth]);

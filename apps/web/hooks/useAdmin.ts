@@ -46,7 +46,8 @@ export function useAdminRefugios(estado?: string) {
         credentials: 'include',
       });
       if (!res.ok) throw new Error('Error al cargar los refugios');
-      const data: IRefugio[] = await res.json();
+      const json = await res.json();
+      const data: IRefugio[] = Array.isArray(json) ? json : (json.data ?? []);
       setRefugios(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar los refugios');
@@ -99,7 +100,8 @@ export function useAdminUsuarios() {
         credentials: 'include',
       });
       if (!res.ok) throw new Error('Error al cargar los usuarios');
-      const data: IUser[] = await res.json();
+      const json = await res.json();
+      const data: IUser[] = Array.isArray(json) ? json : (json.data ?? []);
       setUsuarios(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar los usuarios');
@@ -152,7 +154,8 @@ export function useAdminDonaciones() {
         credentials: 'include',
       });
       if (!res.ok) throw new Error('Error al cargar las donaciones');
-      const data: IDonacionAdmin[] = await res.json();
+      const json = await res.json();
+      const data: IDonacionAdmin[] = Array.isArray(json) ? json : (json.data ?? []);
       setDonaciones(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar las donaciones');

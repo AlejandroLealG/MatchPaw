@@ -5,12 +5,14 @@ import { Spinner } from '../../ui/Spinner';
 import { RequestCard } from './RequestCard';
 import { RequestDetailModal } from './RequestDetailModal';
 import { useMyRequests, type SolicitudConAnimal } from '../../../hooks/useRequests';
+import { useRequireAuth } from '../../../hooks/useRequireAuth';
 
 export function MyRequestsView() {
+  const { user, hydrated } = useRequireAuth();
   const { solicitudes, loading, error } = useMyRequests();
   const [selected, setSelected] = useState<SolicitudConAnimal | null>(null);
 
-  if (loading) {
+  if (!hydrated || !user || loading) {
     return (
       <div className="flex justify-center py-16">
         <Spinner size="lg" label="Cargando solicitudes..." />

@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Post,
   Put,
   Req,
   UseGuards,
@@ -21,6 +22,35 @@ type AuthRequest = Request & { user: JwtPayload };
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class RefugiosController {
   constructor(private readonly refugiosService: RefugiosService) {}
+
+  /** POST /refugios — Crear perfil de refugio (solo usuarios con rol refugio) */
+  @Post()
+  @Roles('refugio')
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Body()
+    body: {
+      nombre: string;
+      descripcion: string;
+      ciudad: string;
+      direccion: string;
+      telefono: string;
+      fotoUrl?: string;
+    },
+    @Req() req: AuthRequest,
+  ): Promise<IRefugio> {
+    const refugio = await this.refugiosService.crearPerfil(req.user.sub, body);
+    return this.refugiosService.toDto(refugio);
+  }
+
+  /** GET /refugios/me — Perfil del refugio del usuario autenticado */
+  @Get('me')
+  @Roles('refugio')
+  @HttpCode(HttpStatus.OK)
+  async findMe(@Req() req: AuthRequest): Promise<IRefugio> {
+    const refugio = await this.refugiosService.findByUserId(req.user.sub);
+    return this.refugiosService.toDto(refugio);
+  }
 
   /** GET /refugios/:id — Perfil público del refugio */
   @Get(':id')
